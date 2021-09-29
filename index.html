@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="Assets/css/site.css" >
+    <title>The art and the Artist</title>
+</head>
+<body>
+<div class="d-flex w-100 full-height flex-column justify-content-center align-items-center">
+    <img class="logo_img" src="Assets/img/cover_music.gif" alt=""  width="20%" />
+    <h1 class="text-center mb-4">Find the upcoming events of your favourite artists</h1>
+        <div class="input-group mb-3 w-50 mx-auto input_media " >
+            <input type="text" class="form-control rounded-lg auth-input-fields input-fields-height border-right-0 input_group_borders"
+                   placeholder="Example: Justin Beiber" aria-label="Recipient's username" onkeyup=" inputKeyUp(event);" aria-describedby="basic-addon2" id="artist_name" required>
+            <div class="input-group-append ">
+                <button class=" search_active rounded-lg input-fields-height Roboto bold border-left-0 input_group_button_borders"
+                        type="submit" data-toggle="modal" data-target="#modal_pass_id" >
+                    <img src="Assets\img\search.svg" width="40%" alt="" onclick="search()"></button>
+            </div>
+
+        </div>
+
+</div>
+
+<img src="Assets/img/guittar.jpg" alt="" style="position: absolute; bottom: 0; z-index: -10;" width="100%"  />
+
+</div>
+
+<!-- External JS -->
+<script src="assets/js/jquerymin.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

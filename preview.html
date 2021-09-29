@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="assets/css/site.css" >
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css">
+    <title>The art and the Artist</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col text-left mb-3">
+            <a href="index.html" class="font-weight-bold text-decoration-none text-dark"> 🡸 Back to home </a></div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="row" id="artist"></div>
+        </div>
+        <div class="col-12">
+            <div class="form-group w-25">
+                <label for="exampleFormControlSelect1">Select Event details</label>
+                <select class="form-control" id="exampleFormControlSelect1" onchange="select_event(event)">
+                    <option value="all">All events</option>
+                    <option value="past">Past events</option>
+                    <option value="upcoming">Upcoming events</option>
+
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-left">
+            <p class="font-weight-bold" id="res"> </p></div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row" id="events"></div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay d-flex align-items-center justify-content-center flex-column" id="loader">
+
+    <div class="spinner-border text-light" role="status">
+    <span class="sr-only">Loading...</span>
+</div>
+</div>
+
+<!-- External JS -->
+<script src="assets/js/jquerymin.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+    var query = window.location.href;
+    var url = new URL(query);
+    var c = url.searchParams.get("artist_name");
+    console.log(c);
+
+    $.ajax( {
+        "url": "https://rest.bandsintown.com/artists/"+c+"?app_id=1234",
+        "method": "GET",
+        "timeout": 0,
+        success:function (response) {
+            console.log(response);
+            if("error" in response){
+                $('#artist').html('<div class="col-12 text-danger text-center"><h5>No Record Found</h5></div>');
+            }else{
+                let fb = "";
+                if(response.facebook_page_url){
+                    fb = '<img class="mr-2 mb-1" src="Assets/img/fb.svg" alt="Generic placeholder image" width="10%"> <span ><a href="'+response.facebook_page_url+'" target="_blank" >fb/'+response.name+'</a></span>'
+                }
+                var name = '"'+ response.name.toString()+'"';
+                $('#artist').html('   <div class="col-lg-3 col-md-6 col-12">\
+            <div class="card border-0">\
+                <div class="card-body pl-0">\
+                    <img src="'+response.thumb_url+'" alt="" style="border-radius: 50%;" width="30%"  />\
+                    <h5 class="mb-0 mt-3">'+response.name+'</h5>\
+                    <div class="mt-1">\
+                        '+fb+'\
+                    </div>\
+                  </div>\
+        </div>\
+      </div>');
+            }
+        },error:function(error){
+            console.log(error,"error");
+        }});
+
+    event("all");
+    function event(e){
+        $.ajax( {
+            "url": "https://rest.bandsintown.com/artists/"+c+"/events?app_id=1234&date="+e,
+            "method": "GET",
+            "timeout": 0,
+            success:function (response) {
+                $('#res').text("");
+                $('#events').html("");
+                if(response.length==0){
+                    $('#events').html('<div class="col-12 text-dark text-center"> \
+                         <img class="logo_img" src="Assets/img/not-found.gif" alt=""  width="20%" /> \
+                        <h5>No '+e+' events Found</h5></div>');
+                }else{
+
+                    $('#res').text(response.length+" Events Found");
+                    let ls = [];
+                    response.forEach(item=>{
+                        var data=' <div class="col-lg-4 col-md-6 col-12 mb-3">\
+            <div class="card">\
+                <div class="card-header bg-transparent shadow-sm">\
+                    Event details\
+                </div>\
+                <div class="card-body px-0 ">\
+                    <div class="d-flex flex-column  justify-content-center align-items-center bd-highlight mb-3">\
+                        <div class="p-2 w-100 bd-highlight ">\
+                            <div class="d-flex flex-row justify-content-between">\
+                                   <h5 class=" text-truncate"><b>Country</b></h5>\
+                                <h5 class=" text-truncate"> <b>Venue</b> </h5>\
+                            </div>\
+                             <div class="d-flex flex-row justify-content-between">\
+                            <h6 class=" text-truncate">'+ item.venue.country+'</h6>\
+                        <h6 class=" text-truncate"> '+item.venue.city+' </h5>\
+                        </div>\
+                                                       </div>\
+                                                        <div class="p-2 w-100 bd-highlight ">\
+                            <div class="d-flex flex-column justify-content-start">\
+                                   <h5 class=" text-truncate"><b>City</b></h5>\
+                                <h6 class=" text-truncate">'+ item.venue.name+'</h6>\
+                            </div>\
+                             <div class="d-flex flex-column justify-content-start">\
+                             <h5 class="text-truncate"> <b>Date</b> </h5>\
+                        <h6 class=" text-truncate"> '+item.datetime+' </h5>\
+                        </div>\
+                                                       </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>';
+                        ls.push(data);
+
+                    });
+                    $('#events').html(ls);
+                    console.log(ls)
+                }
+
+                $('.overlay').removeClass("d-flex");
+                $('.overlay').addClass("d-none");
+
+            },
+            error:function(error){
+                console.log(error,"error");
+            }
+        } );
+    }
+    function select_event (e) {
+        let val = e.target.value;
+        event(val);
+    }
+</script>
+</body>
+</html>
